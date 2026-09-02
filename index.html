@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Minecraft AR Test</title>
+
+  <!-- MindAR -->
+  <script src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.1.4/dist/mindar-image.prod.js"></script>
+
+  <!-- A-Frame -->
+  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+
+  <!-- MindAR + A-Frame -->
+  <script src="https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.1.4/dist/mindar-image-aframe.prod.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+
+    #startButton {
+      position: fixed;
+      z-index: 10;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+
+      padding: 18px 30px;
+      font-size: 18px;
+      border: none;
+      border-radius: 12px;
+
+      background: white;
+      color: black;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+  <button id="startButton">
+    START AR
+  </button>
+
+  <a-scene
+    mindar-image="imageTargetSrc: targets.mind;"
+    color-space="sRGB"
+    renderer="colorManagement: true, physicallyCorrectLights"
+    vr-mode-ui="enabled: false"
+    device-orientation-permission-ui="enabled: false">
+
+    <a-assets>
+
+      <a-asset-item
+        id="hospitalModel"
+        src="./scene.gltf">
+      </a-asset-item>
+
+    </a-assets>
+
+    <a-camera
+      position="0 0 0"
+      look-controls="enabled: false">
+    </a-camera>
+
+    <a-entity
+      mindar-image-target="targetIndex: 0">
+
+      <a-gltf-model
+        src="#hospitalModel"
+        position="0 0 0.1"
+        rotation="0 0 0"
+        scale="0.01 0.01 0.01">
+      </a-gltf-model>
+
+    </a-entity>
+
+  </a-scene>
+
+  <script>
+    const startButton = document.getElementById("startButton");
+
+    startButton.addEventListener("click", () => {
+      startButton.style.display = "none";
+    });
+  </script>
+
+</body>
+</html>
