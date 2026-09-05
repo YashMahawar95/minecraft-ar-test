@@ -168,7 +168,7 @@ box-shadow:0 0 18px rgba(150,100,255,.7);
 </div>
 
 <a-scene
-mindar-image="imageTargetSrc:targets.mind; filterMinCF:0.01; filterBeta:500;"
+mindar-image="imageTargetSrc:targets.mind; filterMinCF:0.01; filterBeta:5000;"
 color-space="sRGB"
 renderer="colorManagement:true,physicallyCorrectLights"
 vr-mode-ui="enabled:false"
@@ -184,7 +184,7 @@ device-orientation-permission-ui="enabled:false">
 <a-gltf-model
 src="#mainModel"
 position="0 0 0.1"
-rotation="0  0"
+rotation="0 180 90"
 scale="0.5 0.5 0.5">
 </a-gltf-model>
 </a-entity>
