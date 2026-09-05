@@ -11,11 +11,33 @@
 
 <style>
 *{box-sizing:border-box}
-body{margin:0;overflow:hidden;font-family:Arial,sans-serif;background:#000}
 
-a-scene{position:fixed;inset:0}
+html,body{
+margin:0;
+width:100%;
+height:100%;
+overflow:hidden;
+background:#000;
+font-family:Arial,sans-serif;
+}
 
-#ui{position:fixed;inset:0;z-index:5;pointer-events:none}
+a-scene{
+position:fixed;
+inset:0;
+}
+
+#ui{
+position:fixed;
+inset:0;
+z-index:5;
+pointer-events:none;
+opacity:0;
+transition:opacity 1.2s ease;
+}
+
+#ui.show{
+opacity:1;
+}
 
 #edgeGlow{
 position:absolute;
@@ -24,13 +46,44 @@ border:1px solid rgba(255,255,255,.12);
 box-shadow:inset 0 0 80px rgba(150,80,255,.12),inset 0 0 35px rgba(0,220,255,.08);
 }
 
-.corner{position:absolute;width:75px;height:75px;opacity:.65}
-.corner:before,.corner:after{content:"";position:absolute;background:rgba(255,255,255,.45);box-shadow:0 0 8px rgba(180,120,255,.5)}
+.corner{
+position:absolute;
+width:75px;
+height:75px;
+opacity:.65;
+}
 
-.tl{top:20px;left:20px;border-top:1px solid rgba(255,255,255,.3);border-left:1px solid rgba(255,255,255,.3);border-radius:14px 0 0 0}
-.tr{top:20px;right:20px;border-top:1px solid rgba(255,255,255,.3);border-right:1px solid rgba(255,255,255,.3);border-radius:0 14px 0 0}
-.bl{bottom:20px;left:20px;border-bottom:1px solid rgba(255,255,255,.3);border-left:1px solid rgba(255,255,255,.3);border-radius:0 0 0 14px}
-.br{bottom:20px;right:20px;border-bottom:1px solid rgba(255,255,255,.3);border-right:1px solid rgba(255,255,255,.3);border-radius:0 0 14px 0}
+.tl{
+top:20px;
+left:20px;
+border-top:1px solid rgba(255,255,255,.3);
+border-left:1px solid rgba(255,255,255,.3);
+border-radius:14px 0 0 0;
+}
+
+.tr{
+top:20px;
+right:20px;
+border-top:1px solid rgba(255,255,255,.3);
+border-right:1px solid rgba(255,255,255,.3);
+border-radius:0 14px 0 0;
+}
+
+.bl{
+bottom:20px;
+left:20px;
+border-bottom:1px solid rgba(255,255,255,.3);
+border-left:1px solid rgba(255,255,255,.3);
+border-radius:0 0 0 14px;
+}
+
+.br{
+bottom:20px;
+right:20px;
+border-bottom:1px solid rgba(255,255,255,.3);
+border-right:1px solid rgba(255,255,255,.3);
+border-radius:0 0 14px 0;
+}
 
 #brand{
 position:absolute;
@@ -38,18 +91,19 @@ top:32px;
 left:50%;
 transform:translateX(-50%);
 color:white;
-text-align:center;
 font-size:13px;
 letter-spacing:4px;
 text-shadow:0 0 12px rgba(180,120,255,.7);
+white-space:nowrap;
 }
 
+/* START SCREEN */
 #start-panel{
 position:fixed;
 z-index:20;
 left:50%;
 top:50%;
-transform:translate(-50%,-50%);
+transform:translate(-50%,-50%) scale(1);
 width:min(90%,380px);
 padding:28px;
 border:1px solid rgba(255,255,255,.25);
@@ -60,10 +114,27 @@ backdrop-filter:blur(18px);
 box-shadow:0 20px 60px rgba(0,0,0,.35);
 text-align:center;
 color:white;
+opacity:1;
+transition:opacity .7s ease,transform .7s ease;
 }
 
-#start-panel h1{margin:0 0 8px;font-size:25px}
-#start-panel p{margin:0 0 22px;opacity:.7;font-size:14px;line-height:1.5}
+#start-panel.hide{
+opacity:0;
+transform:translate(-50%,-50%) scale(.96);
+pointer-events:none;
+}
+
+#start-panel h1{
+margin:0 0 8px;
+font-size:25px;
+}
+
+#start-panel p{
+margin:0 0 22px;
+opacity:.7;
+font-size:14px;
+line-height:1.5;
+}
 
 #startButton{
 padding:14px 28px;
@@ -75,17 +146,30 @@ font-size:16px;
 font-weight:bold;
 cursor:pointer;
 box-shadow:0 0 25px rgba(130,100,255,.35);
+transition:transform .2s ease,box-shadow .2s ease;
 }
 
+#startButton:active{
+transform:scale(.96);
+}
+
+/* LOADING SCREEN */
 #loading-screen{
-display:none;
 position:fixed;
 inset:0;
 z-index:30;
+display:flex;
 align-items:center;
 justify-content:center;
-background:rgba(5,5,15,.18);
-pointer-events:none;
+background:rgba(5,5,15,.35);
+opacity:0;
+visibility:hidden;
+transition:opacity .8s ease,visibility .8s ease;
+}
+
+#loading-screen.show{
+opacity:1;
+visibility:visible;
 }
 
 #loading-card{
@@ -98,6 +182,12 @@ backdrop-filter:blur(18px);
 -webkit-backdrop-filter:blur(18px);
 color:white;
 text-align:center;
+transform:translateY(10px) scale(.97);
+transition:transform .8s ease;
+}
+
+#loading-screen.show #loading-card{
+transform:translateY(0) scale(1);
 }
 
 #loader-ring{
@@ -110,10 +200,20 @@ border-radius:50%;
 animation:spin 1s linear infinite;
 }
 
-#loading-card h2{margin:0 0 6px;font-size:18px}
-#loading-card p{margin:0;font-size:13px;opacity:.65}
+#loading-card h2{
+margin:0 0 6px;
+font-size:18px;
+}
 
-@keyframes spin{to{transform:rotate(360deg)}}
+#loading-card p{
+margin:0;
+font-size:13px;
+opacity:.65;
+}
+
+@keyframes spin{
+to{transform:rotate(360deg)}
+}
 
 .orb{
 position:absolute;
@@ -161,28 +261,29 @@ box-shadow:0 0 18px rgba(150,100,255,.7);
 </div>
 
 <script>
-AFRAME.registerComponent('smooth-follow', {
-  schema: { amount: { type: 'number', default: 0.15 } },
-  init: function () {
-    this.smoothed = null;
-  },
-  tick: function () {
-    const obj = this.el.object3D;
-    if (!this.smoothed) {
-      this.smoothed = obj.position.clone();
-      this.smoothedQuat = obj.quaternion.clone();
-      return;
-    }
-    this.smoothed.lerp(obj.position, this.data.amount);
-    this.smoothedQuat.slerp(obj.quaternion, this.data.amount);
-    obj.position.copy(this.smoothed);
-    obj.quaternion.copy(this.smoothedQuat);
-  }
+AFRAME.registerComponent('smooth-follow',{
+schema:{amount:{type:'number',default:.15}},
+init:function(){
+this.smoothed=null;
+this.smoothedQuat=null;
+},
+tick:function(){
+const obj=this.el.object3D;
+if(!this.smoothed){
+this.smoothed=obj.position.clone();
+this.smoothedQuat=obj.quaternion.clone();
+return;
+}
+this.smoothed.lerp(obj.position,this.data.amount);
+this.smoothedQuat.slerp(obj.quaternion,this.data.amount);
+obj.position.copy(this.smoothed);
+obj.quaternion.copy(this.smoothedQuat);
+}
 });
 </script>
 
 <a-scene
-mindar-image="imageTargetSrc:targets.mind; filterMinCF:0.001; filterBeta:10; missTolerance:5; warmupTolerance:5;"
+mindar-image="imageTargetSrc:targets.mind;filterMinCF:0.001;filterBeta:10;missTolerance:5;warmupTolerance:5;"
 color-space="sRGB"
 renderer="colorManagement:true,physicallyCorrectLights"
 vr-mode-ui="enabled:false"
@@ -210,14 +311,25 @@ smooth-follow="amount:0.15">
 const startButton=document.getElementById("startButton");
 const startPanel=document.getElementById("start-panel");
 const loadingScreen=document.getElementById("loading-screen");
+const ui=document.getElementById("ui");
+const scene=document.querySelector("a-scene");
+const model=document.querySelector("a-gltf-model");
 
 startButton.addEventListener("click",()=>{
-startPanel.style.display="none";
-loadingScreen.style.display="flex";
+startPanel.classList.add("hide");
 
 setTimeout(()=>{
-loadingScreen.style.display="none";
-},1800);
+loadingScreen.classList.add("show");
+},350);
+
+setTimeout(()=>{
+loadingScreen.classList.remove("show");
+ui.classList.add("show");
+},2200);
+});
+
+model.addEventListener("model-loaded",()=>{
+console.log("3D model loaded");
 });
 </script>
 
