@@ -15,10 +15,8 @@ body{margin:0;overflow:hidden;font-family:Arial,sans-serif;background:#000}
 
 a-scene{position:fixed;inset:0}
 
-/* GLASSMORPHISM UI OVER CAMERA */
 #ui{position:fixed;inset:0;z-index:5;pointer-events:none}
 
-/* SUBTLE BORDER OVERLAY */
 #edgeGlow{
 position:absolute;
 inset:0;
@@ -26,7 +24,6 @@ border:1px solid rgba(255,255,255,.12);
 box-shadow:inset 0 0 80px rgba(150,80,255,.12),inset 0 0 35px rgba(0,220,255,.08);
 }
 
-/* CORNER DECORATIONS */
 .corner{position:absolute;width:75px;height:75px;opacity:.65}
 .corner:before,.corner:after{content:"";position:absolute;background:rgba(255,255,255,.45);box-shadow:0 0 8px rgba(180,120,255,.5)}
 
@@ -35,7 +32,6 @@ box-shadow:inset 0 0 80px rgba(150,80,255,.12),inset 0 0 35px rgba(0,220,255,.08
 .bl{bottom:20px;left:20px;border-bottom:1px solid rgba(255,255,255,.3);border-left:1px solid rgba(255,255,255,.3);border-radius:0 0 0 14px}
 .br{bottom:20px;right:20px;border-bottom:1px solid rgba(255,255,255,.3);border-right:1px solid rgba(255,255,255,.3);border-radius:0 0 14px 0}
 
-/* TOP BRANDING */
 #brand{
 position:absolute;
 top:32px;
@@ -48,7 +44,6 @@ letter-spacing:4px;
 text-shadow:0 0 12px rgba(180,120,255,.7);
 }
 
-/* START PANEL */
 #start-panel{
 position:fixed;
 z-index:20;
@@ -82,7 +77,6 @@ cursor:pointer;
 box-shadow:0 0 25px rgba(130,100,255,.35);
 }
 
-/* LOADING SCREEN */
 #loading-screen{
 display:none;
 position:fixed;
@@ -121,7 +115,6 @@ animation:spin 1s linear infinite;
 
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* SMALL FLOATING GLASS ORBS */
 .orb{
 position:absolute;
 width:12px;
@@ -167,8 +160,29 @@ box-shadow:0 0 18px rgba(150,100,255,.7);
 <div class="orb o4"></div>
 </div>
 
+<script>
+AFRAME.registerComponent('smooth-follow', {
+  schema: { amount: { type: 'number', default: 0.15 } },
+  init: function () {
+    this.smoothed = null;
+  },
+  tick: function () {
+    const obj = this.el.object3D;
+    if (!this.smoothed) {
+      this.smoothed = obj.position.clone();
+      this.smoothedQuat = obj.quaternion.clone();
+      return;
+    }
+    this.smoothed.lerp(obj.position, this.data.amount);
+    this.smoothedQuat.slerp(obj.quaternion, this.data.amount);
+    obj.position.copy(this.smoothed);
+    obj.quaternion.copy(this.smoothedQuat);
+  }
+});
+</script>
+
 <a-scene
-mindar-image="imageTargetSrc:targets.mind; filterMinCF:0.0001; filterBeta:2000;"
+mindar-image="imageTargetSrc:targets.mind; filterMinCF:0.001; filterBeta:10; missTolerance:5; warmupTolerance:5;"
 color-space="sRGB"
 renderer="colorManagement:true,physicallyCorrectLights"
 vr-mode-ui="enabled:false"
@@ -185,7 +199,8 @@ device-orientation-permission-ui="enabled:false">
 src="#mainModel"
 position="0 0 0.1"
 rotation="-90 0 0"
-scale="0.5 0.5 0.5">
+scale="0.5 0.5 0.5"
+smooth-follow="amount:0.15">
 </a-gltf-model>
 </a-entity>
 
